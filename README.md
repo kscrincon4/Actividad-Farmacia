@@ -8,11 +8,10 @@ Programa de consola en **C# (.NET 10)** para una única farmacia en Colombia. Pe
 2. [Funcionalidades](#funcionalidades)
 3. [Patrones de diseño usados](#patrones-de-diseño-usados)
 4. [¿Por qué cada patrón?](#por-qué-cada-patrón)
-5. [Diagrama de clases](#diagrama-de-clases-mermaid)
-6. [Cómo ejecutar](#cómo-ejecutar)
-7. [Ejemplo de salida (modo demo)](#ejemplo-de-salida-modo-demo)
-8. [Estructura del proyecto](#estructura-del-proyecto)
-9. [Documentación adicional](#documentación-adicional)
+5. [Cómo ejecutar](#cómo-ejecutar)
+6. [Ejemplo de salida (modo demo)](#ejemplo-de-salida-modo-demo)
+7. [Estructura del proyecto](#estructura-del-proyecto)
+8. [Documentación adicional](#documentación-adicional)
 
 ## Problema
 
@@ -51,77 +50,6 @@ La farmacia maneja varios tipos de medicamentos (venta libre, con fórmula médi
 - **Adapter (estructural):** el proveedor entrega su inventario con claves propias (`cod`, `nom`, `cant`, `valor`, `tipo_prod`), incompatibles con nuestros objetos `Medicamento`. El adapter traduce ese formato al interno sin modificar la clase del proveedor ni el resto del sistema.
 - **Decorator (estructural):** el precio final es una combinación de ajustes (IVA siempre, descuento de afiliado y promoción opcionales). En vez de crear una subclase por cada combinación, cada decorador envuelve a otro `Precio` y aplica su ajuste; se combinan libremente en cadena.
 - **Facade (estructural):** coordinar factories, adapter y decoradores sería complejo para el menú de consola. La facade expone solo 5 métodos simples (`CargarInventarioProveedor`, `ListarInventario`, `ConsultarDisponibilidad`, `CalcularPrecio`, `Vender`) y `Program.cs` no conoce ninguna de las clases internas.
-
-## Diagrama de clases (Mermaid)
-
-```mermaid
-classDiagram
-    class Medicamento {
-        +Codigo: string
-        +Nombre: string
-        +PrecioBase: decimal
-        +Cantidad: int
-        +RequiereFormula() bool
-        +LimitePorVenta() int
-    }
-    class VentaLibre
-    class ConFormula
-    class Controlado
-    Medicamento <|-- VentaLibre
-    Medicamento <|-- ConFormula
-    Medicamento <|-- Controlado
-
-    class MedicamentoFactory {
-        <<abstract>>
-        +CrearMedicamento(...) Medicamento
-    }
-    class VentaLibreFactory
-    class ConFormulaFactory
-    class ControladoFactory
-    MedicamentoFactory <|-- VentaLibreFactory
-    MedicamentoFactory <|-- ConFormulaFactory
-    MedicamentoFactory <|-- ControladoFactory
-
-    class FuenteInventario {
-        <<interface>>
-        +ObtenerMedicamentos() List
-    }
-    class ProveedorExterno {
-        +Entregar() List
-    }
-    class ProveedorAdapter {
-        +ObtenerMedicamentos() List
-    }
-    FuenteInventario <|.. ProveedorAdapter
-    ProveedorAdapter --> ProveedorExterno
-    ProveedorAdapter ..> MedicamentoFactory : usa
-
-    class Precio {
-        <<interface>>
-        +Calcular() decimal
-    }
-    class PrecioBase
-    class ConIVA
-    class ConDescuentoAfiliado
-    class ConPromocion
-    Precio <|.. PrecioBase
-    Precio <|.. ConIVA
-    Precio <|.. ConDescuentoAfiliado
-    Precio <|.. ConPromocion
-    ConIVA --> Precio
-    ConDescuentoAfiliado --> Precio
-    ConPromocion --> Precio
-
-    class FarmaciaFacade {
-        +CargarInventarioProveedor() int
-        +ListarInventario()
-        +ConsultarDisponibilidad(codigo) Medicamento
-        +CalcularPrecio(codigo, afiliado, promocion) decimal
-        +Vender(codigo, cantidad, tieneFormula) (bool, string)
-    }
-    FarmaciaFacade --> ProveedorAdapter
-    FarmaciaFacade ..> Precio : construye
-```
 
 ## Cómo ejecutar
 
