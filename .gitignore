@@ -1,0 +1,14 @@
+## Carpetas de compilación de .NET
+bin/
+obj/
+
+## Visual Studio / VS Code / Rider
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+## Sistema operativo
+.DS_Store
+Thumbs.db
